@@ -2,7 +2,7 @@
 
 namespace Validator;
 
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use Repository\TokensAutorizadosRepository;
 use Service\UsuariosService;
 use Util\ConstantesGenericasUtil;
@@ -29,7 +29,6 @@ class RequestValidator
     {
         $retorno = utf8_encode(ConstantesGenericasUtil::MSG_ERRO_TIPO_ROTA);
 
-        $this->request['metodo'] == 'POST';
         if (in_array($this->request['metodo'], ConstantesGenericasUtil::TIPO_REQUEST, true)) {
             $retorno = $this->direcionarRequest();
         }
@@ -57,7 +56,7 @@ class RequestValidator
                     $retorno = $usuarioService->validarGet();
                     break;
                 default:
-                    throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
+                    throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
             }
         }
         return $retorno;
@@ -73,9 +72,27 @@ class RequestValidator
                     $retorno = $usuarioService->validarDelete();
                     break;
                 default:
-                    throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
+                    throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
             }
         }
         return $retorno;
+    }
+
+    private function post()
+    {
+        $retorno = utf8_encode(ConstantesGenericasUtil::MSG_ERRO_TIPO_ROTA);
+        if (in_array($this->request['rota'], ConstantesGenericasUtil::TIPO_POST)) {
+            switch ($this->request['rota']) {
+                case self::USUARIOS:
+                    $usuarioService = new UsuariosService($this->request);
+                    $usuarioService->setDadosCorpoRequest($this->dadosRequest);
+                    $retorno = $usuarioService->validarPost();
+                    break;
+                default:
+                    throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
+            }
+            return $retorno;
+        }
+        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_TIPO_ROTA);
     }
 }

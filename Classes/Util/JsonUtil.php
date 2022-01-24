@@ -2,7 +2,8 @@
 
 namespace Util;
 
-use http\Exception\InvalidArgumentException;
+
+use InvalidArgumentException;
 
 class JsonUtil
 {
@@ -31,7 +32,7 @@ class JsonUtil
     public static function tratarCorpoRequisicaoJson()
     {
         try {
-            $postJson = json_decode(file_get_contents('php:://input'), true);
+            $postJson = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERR0_JSON_VAZIO);
         }
